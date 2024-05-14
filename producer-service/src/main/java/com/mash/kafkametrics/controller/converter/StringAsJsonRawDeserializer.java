@@ -1,6 +1,5 @@
 package com.mash.kafkametrics.controller.converter;
 
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -17,7 +16,7 @@ import java.io.IOException;
 @Component
 public class StringAsJsonRawDeserializer extends JsonDeserializer<String> {
     @Override
-    public String deserialize(JsonParser p, DeserializationContext context) throws IOException, JacksonException {
+    public String deserialize(JsonParser p, DeserializationContext context) throws IOException {
         TreeNode tree = p.getCodec().readTree(p);
         return tree.toString();
     }

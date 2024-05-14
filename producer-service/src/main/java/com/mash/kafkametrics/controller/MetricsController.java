@@ -3,7 +3,6 @@ package com.mash.kafkametrics.controller;
 import com.mash.kafkametrics.model.MetricsData;
 import com.mash.kafkametrics.service.sender.DataSender;
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.common.KafkaException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.web.bind.annotation.PostMapping;
