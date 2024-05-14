@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: "producer-service"
+  kafka:
+    producer:
+      client-id: "producer-service"
+    bootstrap-servers: "localhost:29092"
+
+producer-service:
+  kafka:
+    topic: "metrics-topic"
+
+server:
+  error:
+    whitelabel:
+      enabled: off
