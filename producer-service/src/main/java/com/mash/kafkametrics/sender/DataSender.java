@@ -1,4 +1,4 @@
-package com.mash.kafkametrics.service.sender;
+package com.mash.kafkametrics.sender;
 
 import org.springframework.kafka.support.SendResult;
 

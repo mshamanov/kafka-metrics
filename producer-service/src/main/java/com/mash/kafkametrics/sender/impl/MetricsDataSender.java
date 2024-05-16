@@ -1,7 +1,7 @@
-package com.mash.kafkametrics.service.sender.impl;
+package com.mash.kafkametrics.sender.impl;
 
 import com.mash.kafkametrics.model.MetricsData;
-import com.mash.kafkametrics.service.sender.DataSender;
+import com.mash.kafkametrics.sender.DataSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -12,14 +12,14 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Class to be used as a default metrics data sender {@link MetricsData} for Apache Kafka.
+ * Class to be used as a default metrics data sender {@link DataSender} for Apache Kafka.
  *
  * @author Mikhail Shamanov
  */
 @Slf4j
-@RequiredArgsConstructor
 @Component
-public class DefaultMetricsDataSender implements DataSender<String, MetricsData> {
+@RequiredArgsConstructor
+public class MetricsDataSender implements DataSender<String, MetricsData> {
     private final NewTopic topic;
     private final KafkaTemplate<String, MetricsData> kafkaTemplate;
 
@@ -27,12 +27,10 @@ public class DefaultMetricsDataSender implements DataSender<String, MetricsData>
     public CompletableFuture<SendResult<String, MetricsData>> send(MetricsData value) {
         try {
             log.info("Publishing metrics data: {}", value);
-            return this.kafkaTemplate.send(this.topic.name(), value)
+            return this.kafkaTemplate.send(this.topic.name(), value.getName(), value)
                     .whenComplete((res, err) -> {
                         if (err == null) {
-                            log.info("Metrics data: '{}' has been published, offset: {}",
-                                    value.getName(),
-                                    res.getRecordMetadata().offset());
+                            log.info("Metrics data: '{}' has been published", value.getName());
                         } else {
                             log.error("Metrics data: '{}' failed to get published", value.getName(), err);
                         }

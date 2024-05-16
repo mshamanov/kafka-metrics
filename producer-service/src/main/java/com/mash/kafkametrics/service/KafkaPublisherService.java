@@ -1,8 +1,11 @@
-package com.mash.kafkametrics.service.scheduler;
+package com.mash.kafkametrics.service;
 
-import com.mash.kafkametrics.service.publisher.DataPublisher;
+import com.mash.kafkametrics.publisher.DataPublisher;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Class to be run as a scheduler (with specified fixed rate) to start publishing data when the application starts.
@@ -11,10 +14,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class ScheduledPublisherService {
+public class KafkaPublisherService {
     private final DataPublisher dataPublisher;
 
-    //    @Scheduled(fixedRate = 60L, initialDelay = 3L, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedRate = 30L, initialDelay = 3L, timeUnit = TimeUnit.SECONDS)
     private void scheduledPublish() {
         this.dataPublisher.publish();
     }
