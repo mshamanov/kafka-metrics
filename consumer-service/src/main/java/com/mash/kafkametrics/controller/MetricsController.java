@@ -5,10 +5,7 @@ import com.mash.kafkametrics.service.MetricsDataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/metrics")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class MetricsController {
     private final MetricsDataService service;
 
@@ -33,9 +31,11 @@ public class MetricsController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getMetrics(@PathVariable String id) {
         MetricsData data = this.service.findById(id);
+
         if (data == null) {
             return ResponseEntity.notFound().build();
         }
+
         return ResponseEntity.ok(data);
     }
 }

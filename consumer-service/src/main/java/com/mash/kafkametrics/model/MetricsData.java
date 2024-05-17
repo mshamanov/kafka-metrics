@@ -31,8 +31,7 @@ public class MetricsData {
     @JsonProperty(value = "name", required = true)
     private String name;
 
-    @Column(name = "data", nullable = false)
-    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "data", nullable = false, columnDefinition = "text")
     @JsonProperty(value = "data", required = true)
     @JsonSerialize(using = StringToJsonTreeSerializer.class)
     private String data;

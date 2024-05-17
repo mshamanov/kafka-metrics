@@ -1,8 +1,6 @@
 package com.mash.kafkametrics.databind;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import org.springframework.stereotype.Component;
@@ -21,6 +19,8 @@ public class StringToJsonTreeSerializer extends JsonSerializer<String> {
         try (JsonParser parser = gen.getCodec().getFactory().createParser(value)) {
             TreeNode tree = parser.readValueAsTree();
             gen.writeTree(tree);
+        } catch (JsonProcessingException e) {
+            gen.writeString(value);
         }
     }
 }

@@ -14,7 +14,7 @@ public class ConsumerServiceApplication {
     private static ApplicationContext context;
 
     public static void main(String[] args) {
-        SpringApplication.run(ConsumerServiceApplication.class, args);
+        ConsumerServiceApplication.context = SpringApplication.run(ConsumerServiceApplication.class, args);
     }
 
     public static ApplicationContext getApplicationContext() {

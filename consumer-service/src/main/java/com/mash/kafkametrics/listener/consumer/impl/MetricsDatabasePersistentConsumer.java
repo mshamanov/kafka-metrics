@@ -1,8 +1,6 @@
 package com.mash.kafkametrics.listener.consumer.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mash.kafkametrics.listener.consumer.MetricsMessagesConsumer;
 import com.mash.kafkametrics.model.MetricsData;
 import com.mash.kafkametrics.service.MetricsDataService;
@@ -27,13 +25,20 @@ public class MetricsDatabasePersistentConsumer implements MetricsMessagesConsume
 
     @Override
     public void accept(List<Message<MetricsData>> metricsData) {
-        Map<String, Map<String, Object>> metricsMap = new HashMap<>();
+        Map<String, Map<String, Object>> nestedMetrics = new HashMap<>();
+        Map<String, String> keyValueMetrics = new HashMap<>();
 
         metricsData.forEach(message -> {
             MetricsData payload = message.getPayload();
             try {
-                Map<String, Object> map = JsonUtils.readAsMap(payload.getData());
-                metricsMap.put(payload.getName(), map);
+                String data = payload.getData();
+                if (JsonUtils.isObject(data)) {
+                    Map<String, Object> map = JsonUtils.readAsMap(data);
+                    nestedMetrics.put(payload.getName(), map);
+                } else {
+                    keyValueMetrics.put(payload.getName(), payload.getData());
+                }
+
                 MetricsData save = this.service.save(payload);
                 log.info("Metrics '{}' has been persisted", save.getName());
             } catch (JsonProcessingException e) {
@@ -42,7 +47,8 @@ public class MetricsDatabasePersistentConsumer implements MetricsMessagesConsume
         });
 
         CompletableFuture.runAsync(() -> {
-            log.info("Processing metrics data...: {}", metricsMap.size());
+            log.info("Processing nested metrics...: {}", nestedMetrics.size());
+            log.info("Processing 'key = value' metrics...: {}", keyValueMetrics.size());
         });
     }
 }

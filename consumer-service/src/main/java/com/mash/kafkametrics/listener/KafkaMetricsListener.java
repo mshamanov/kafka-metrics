@@ -20,12 +20,12 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class KafkaMetricsListener {
-    private final MetricsMessagesConsumer consumerStrategy;
+    private final MetricsMessagesConsumer messagesConsumer;
 
     @KafkaListener(
             topics = "${consumer-service.kafka.topic}",
             containerFactory = "listenerContainerFactory")
     public void listen(@Payload List<Message<MetricsData>> values) {
-        this.consumerStrategy.accept(values);
+        this.messagesConsumer.accept(values);
     }
 }
