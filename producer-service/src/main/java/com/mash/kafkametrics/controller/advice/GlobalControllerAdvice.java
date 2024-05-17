@@ -5,7 +5,6 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,12 +28,15 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> validationError(MethodArgumentNotValidException e) {
         BindingResult result = e.getBindingResult();
+
         List<FieldError> fieldErrors = result.getFieldErrors();
         String errorsAsString = fieldErrors.stream()
                 .map(error -> "Error: %s - %s".formatted(error.getField(), error.getDefaultMessage()))
                 .collect(Collectors.joining(System.lineSeparator()));
+
         ProblemDetail body = e.getBody();
         body.setDetail(errorsAsString);
+
         return ResponseEntity.badRequest().body(body);
     }
 
@@ -46,7 +48,7 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler
     public ResponseEntity<?> handleException(Exception e) {
-        ErrorResponse error = ErrorResponse.builder(e, HttpStatus.BAD_REQUEST, e.getLocalizedMessage()).build();
-        return ResponseEntity.badRequest().body(error.getBody());
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getLocalizedMessage());
+        return ResponseEntity.badRequest().body(problemDetail);
     }
 }

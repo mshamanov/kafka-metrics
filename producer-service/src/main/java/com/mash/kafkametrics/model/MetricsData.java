@@ -3,6 +3,7 @@ package com.mash.kafkametrics.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.mash.kafkametrics.databind.JsonTreeToStringDeserializer;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +26,7 @@ public class MetricsData {
 
     @JsonProperty(value = "data", required = true)
     @JsonDeserialize(using = JsonTreeToStringDeserializer.class)
-    @NotEmpty
+    @NotBlank
     private String data;
 
     @JsonProperty(value = "description")

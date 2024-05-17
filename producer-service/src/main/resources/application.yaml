@@ -10,7 +10,25 @@ producer-service:
   kafka:
     topic: "metrics-topic"
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: 'health, metrics'
+      discovery:
+        enabled: false
+  endpoint:
+    health:
+      show-details: always
+
 server:
   error:
     whitelabel:
       enabled: off
+  port: 8080
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    url: /open-api.yaml

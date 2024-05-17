@@ -1,6 +1,7 @@
 package com.mash.kafkametrics.databind;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -17,7 +18,10 @@ import java.io.IOException;
 public class JsonTreeToStringDeserializer extends JsonDeserializer<String> {
     @Override
     public String deserialize(JsonParser p, DeserializationContext context) throws IOException {
-        TreeNode tree = p.getCodec().readTree(p);
-        return tree.toString();
+        if (p.hasToken(JsonToken.VALUE_STRING)) {
+            return p.getText();
+        }
+
+        return p.readValueAsTree().toString();
     }
 }

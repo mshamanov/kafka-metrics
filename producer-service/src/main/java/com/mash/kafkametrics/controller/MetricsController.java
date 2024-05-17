@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/api/metrics")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class MetricsController {
     private final DataSender<String, MetricsData> dataSender;
 

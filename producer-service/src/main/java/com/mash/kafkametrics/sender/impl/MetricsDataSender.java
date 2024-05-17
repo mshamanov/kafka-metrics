@@ -26,7 +26,6 @@ public class MetricsDataSender implements DataSender<String, MetricsData> {
     @Override
     public CompletableFuture<SendResult<String, MetricsData>> send(MetricsData value) {
         try {
-            log.info("Publishing metrics data: {}", value);
             return this.kafkaTemplate.send(this.topic.name(), value.getName(), value)
                     .whenComplete((res, err) -> {
                         if (err == null) {
