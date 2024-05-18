@@ -8,7 +8,7 @@ info:
     email: 'shamanovma@gmail.com'
   version: '1.0'
 paths:
-  /api/metrics:
+  /api/v1/metrics:
     post:
       tags:
         - "Metrics Controller"
