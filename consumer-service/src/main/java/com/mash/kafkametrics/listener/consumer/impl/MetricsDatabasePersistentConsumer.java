@@ -7,7 +7,6 @@ import com.mash.kafkametrics.service.MetricsDataService;
 import com.mash.kafkametrics.utils.JsonUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +16,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
-@Primary
 @Component
 @RequiredArgsConstructor
 public class MetricsDatabasePersistentConsumer implements MetricsMessagesConsumer {
