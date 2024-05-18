@@ -1,8 +1,8 @@
 package com.mash.kafkametrics.controller.advice;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -13,9 +13,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  */
 @ControllerAdvice
 public class GlobalControllerAdvice {
+    /**
+     * Handles any exception.
+     *
+     * @param e instance of exception
+     * @return response
+     */
     @ExceptionHandler
     public ResponseEntity<?> handleException(Exception e) {
-        ErrorResponse error = ErrorResponse.builder(e, HttpStatus.BAD_REQUEST, e.getLocalizedMessage()).build();
-        return ResponseEntity.badRequest().body(error.getBody());
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getLocalizedMessage());
+        return ResponseEntity.of(problemDetail).build();
     }
 }
