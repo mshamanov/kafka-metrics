@@ -17,11 +17,11 @@ import java.util.Map;
 public class JsonUtils {
 
     /**
-     * Gets an instance of {@link ObjectMapper} from application context.
+     * Gets an instance of {@link ObjectMapper} from the application context.
      *
-     * @return instance of {@link ObjectMapper}
+     * @return an instance of {@link ObjectMapper}
      */
-    private static ObjectMapper getObjectMapper() {
+    public static ObjectMapper getObjectMapper() {
         return ConsumerServiceApplication.getApplicationContext().getBean(ObjectMapper.class);
     }
 
