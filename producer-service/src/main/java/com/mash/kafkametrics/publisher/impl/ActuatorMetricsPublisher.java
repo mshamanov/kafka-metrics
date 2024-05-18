@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * Class to be used as a metrics data publisher for sending such data over Apache Kafka.
+ * Class to be used as a metrics data publisher for sending collected metrics data over Apache Kafka.
  * It collects data from various Spring Actuator endpoints and sends it over the Apache kafka using {@link DataSender}.
  *
  * @author Mikhail Shamanov
@@ -35,26 +35,34 @@ public class ActuatorMetricsPublisher implements DataPublisher {
     @Override
     public void publish() {
         try {
-            List<MetricsData> metricsDataList = Stream.of(healthMetrics(), commonMetrics())
-                    .flatMap(List::stream)
-                    .toList();
-
-            for (MetricsData metricsData : metricsDataList) {
+            for (MetricsData metricsData : this.collectMetrics()) {
                 this.dataSender.send(metricsData);
             }
         } catch (Exception e) {
-            log.error("Error while publishing metric", e);
+            log.error("Error while publishing metrics data", e);
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Collects metrics on application health information from {@link HealthEndpoint}.
+     * Collects all metrics data in a {@link List}.
+     *
+     * @return a bunch of metrics data
+     * @throws JsonProcessingException when fails to parse data as json
+     */
+    public List<MetricsData> collectMetrics() throws JsonProcessingException {
+        return Stream.of(healthMetrics(), commonMetrics())
+                .flatMap(List::stream)
+                .toList();
+    }
+
+    /**
+     * Collects metrics data on application health information from {@link HealthEndpoint}.
      *
      * @return list of metrics
      * @throws JsonProcessingException when fails to parse data as json
      */
-    private List<MetricsData> healthMetrics() throws JsonProcessingException {
+    public List<MetricsData> healthMetrics() throws JsonProcessingException {
         return Collections.singletonList(MetricsData.builder()
                 .name("health")
                 .data(JsonUtils.stringify(this.healthEndpoint.health()))
@@ -62,12 +70,12 @@ public class ActuatorMetricsPublisher implements DataPublisher {
     }
 
     /**
-     * Collects various application metrics from {@link MetricsEndpoint}.
+     * Collects various application metrics data from {@link MetricsEndpoint}.
      *
      * @return list of metrics
      * @throws JsonProcessingException when fails to parse data as json
      */
-    private List<MetricsData> commonMetrics() throws JsonProcessingException {
+    public List<MetricsData> commonMetrics() throws JsonProcessingException {
         List<MetricsData> resultList = new ArrayList<>();
 
         for (var descriptorName : this.metricsEndpoint.listNames().getNames()) {
