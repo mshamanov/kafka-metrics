@@ -8,6 +8,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +27,7 @@ public class GlobalControllerAdvice {
      * @return response
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> validationError(MethodArgumentNotValidException e) {
+    public ResponseEntity<?> handleValidationException(MethodArgumentNotValidException e) {
         BindingResult result = e.getBindingResult();
 
         List<FieldError> fieldErrors = result.getFieldErrors();
@@ -34,10 +35,21 @@ public class GlobalControllerAdvice {
                 .map(error -> "Error: %s - %s".formatted(error.getField(), error.getDefaultMessage()))
                 .collect(Collectors.joining(System.lineSeparator()));
 
-        ProblemDetail body = e.getBody();
-        body.setDetail(errorsAsString);
+        ProblemDetail problemDetail = e.getBody();
+        problemDetail.setDetail(errorsAsString);
 
-        return ResponseEntity.badRequest().body(body);
+        return ResponseEntity.of(problemDetail).build();
+    }
+
+    /**
+     * Handles {@link ResponseStatusException}.
+     *
+     * @param e instance of exception
+     * @return response
+     */
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<?> handleResponseException(ResponseStatusException e) {
+        return ResponseEntity.of(e.getBody()).build();
     }
 
     /**
@@ -47,8 +59,8 @@ public class GlobalControllerAdvice {
      * @return response
      */
     @ExceptionHandler
-    public ResponseEntity<?> handleException(Exception e) {
+    public ResponseEntity<?> handleAnyException(Exception e) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getLocalizedMessage());
-        return ResponseEntity.badRequest().body(problemDetail);
+        return ResponseEntity.of(problemDetail).build();
     }
 }
