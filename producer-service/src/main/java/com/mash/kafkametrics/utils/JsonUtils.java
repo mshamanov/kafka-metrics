@@ -12,7 +12,12 @@ import lombok.experimental.UtilityClass;
  */
 @UtilityClass
 public class JsonUtils {
-    private static ObjectMapper getObjectMapper() {
+    /**
+     * Gets an instance of {@link ObjectMapper} from the application context.
+     *
+     * @return an instance of {@link ObjectMapper}
+     */
+    public static ObjectMapper getObjectMapper() {
         return ProducerServiceApplication.getApplicationContext().getBean(ObjectMapper.class);
     }
 
