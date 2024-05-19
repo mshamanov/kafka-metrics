@@ -65,7 +65,7 @@ class MetricsControllerMvcTest {
                 .andDo(print())
                 .andExpectAll(
                         status().isBadRequest(),
-                        content().contentType(MediaType.APPLICATION_JSON),
+                        content().contentType(MediaType.APPLICATION_PROBLEM_JSON),
                         jsonPath("$.detail").value(Matchers.containsString("Error: data"))
                 );
 
