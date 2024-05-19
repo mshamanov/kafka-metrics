@@ -41,7 +41,7 @@ paths:
         '400':
           $ref: '#/components/responses/ErrorResponse'
         '404':
-          description: 'A metrics data with the specified {id} was not found'
+          $ref: '#/components/responses/ErrorResponse'
 components:
   schemas:
     AnyValue:
