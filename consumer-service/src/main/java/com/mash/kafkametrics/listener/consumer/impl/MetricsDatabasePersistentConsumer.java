@@ -24,7 +24,7 @@ public class MetricsDatabasePersistentConsumer implements MetricsMessagesConsume
     @Override
     public void accept(List<Message<MetricsData>> metricsData) {
         Map<String, Map<String, Object>> nestedMetrics = new HashMap<>();
-        Map<String, String> keyValueMetrics = new HashMap<>();
+        Map<String, String> plainMetrics = new HashMap<>();
 
         metricsData.forEach(message -> {
             MetricsData payload = message.getPayload();
@@ -34,7 +34,7 @@ public class MetricsDatabasePersistentConsumer implements MetricsMessagesConsume
                     Map<String, Object> map = JsonUtils.readAsMap(data);
                     nestedMetrics.put(payload.getName(), map);
                 } else {
-                    keyValueMetrics.put(payload.getName(), payload.getData());
+                    plainMetrics.put(payload.getName(), payload.getData());
                 }
 
                 MetricsData save = this.service.save(payload);
@@ -44,9 +44,14 @@ public class MetricsDatabasePersistentConsumer implements MetricsMessagesConsume
             }
         });
 
+        this.processMetricsData(nestedMetrics, plainMetrics);
+    }
+
+    private void processMetricsData(Map<String, Map<String, Object>> nestedMetrics,
+                                    Map<String, String> plainMetrics) {
         CompletableFuture.runAsync(() -> {
             log.info("Processing nested metrics...: {}", nestedMetrics.size());
-            log.info("Processing 'key = value' metrics...: {}", keyValueMetrics.size());
+            log.info("Processing plain metrics...: {}", plainMetrics.size());
         });
     }
 }
