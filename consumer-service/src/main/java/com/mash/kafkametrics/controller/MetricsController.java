@@ -3,10 +3,12 @@ package com.mash.kafkametrics.controller;
 import com.mash.kafkametrics.model.MetricsData;
 import com.mash.kafkametrics.service.MetricsDataService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -34,7 +36,7 @@ public class MetricsController {
         MetricsData data = this.service.findById(id);
 
         if (data == null) {
-            return ResponseEntity.notFound().build();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Metrics with id " + id + " not found");
         }
 
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(data);
