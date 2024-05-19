@@ -40,16 +40,22 @@ class MetricsDatabasePersistentConsumerTest {
                 .data(System.getProperty("java.vm.name"))
                 .build();
 
-        List<MetricsData> metricsList = List.of(healthMetrics, jvmInfoMetrics);
+        MetricsData nestedMetrics = MetricsData.builder()
+                .name("custom.service")
+                .data("{\"status\":\"UP\",\"details\":{\"uptime\":1906}}")
+                .description("custom service metrics information")
+                .build();
+
+        List<MetricsData> metricsList = List.of(healthMetrics, jvmInfoMetrics, nestedMetrics);
 
         List<Message<MetricsData>> messages = metricsList.stream()
                 .map(m -> MessageBuilder.createMessage(m, headers))
                 .toList();
 
         ArgumentCaptor<MetricsData> captor = ArgumentCaptor.forClass(MetricsData.class);
-        Mockito.doReturn(healthMetrics, jvmInfoMetrics).when(this.service).save(captor.capture());
+        Mockito.doReturn(healthMetrics, jvmInfoMetrics, nestedMetrics).when(this.service).save(captor.capture());
 
-        try (MockedStatic<JsonUtils> mockedStatic = Mockito.mockStatic(JsonUtils.class)) {
+        try (MockedStatic<JsonUtils> mockedStatic = Mockito.mockStatic(JsonUtils.class, Mockito.CALLS_REAL_METHODS)) {
             mockedStatic.when(JsonUtils::getObjectMapper).thenReturn(JacksonUtils.enhancedObjectMapper());
             this.consumer.accept(messages);
         }
