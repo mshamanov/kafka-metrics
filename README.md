@@ -341,7 +341,7 @@ mvn spring-boot:run -Dactive.spring.profiles=postgres
 Swagger-UI в браузере для непосредственного взаимодействия с REST API:
 
 - `Producer Service` - [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-- `Consumer Service` - [http://localhost:8081/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- `Consumer Service` - [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html)
 
 > [!IMPORTANT]
 > Поменяйте номер порта, если Вы вносили изменения в конфигурацию сервисов.
