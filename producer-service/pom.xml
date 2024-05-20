@@ -7,6 +7,7 @@
         <groupId>com.mash</groupId>
         <artifactId>kafka-metrics</artifactId>
         <version>0.0.1</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>producer-service</artifactId>
     <version>0.0.1</version>

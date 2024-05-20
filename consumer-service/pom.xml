@@ -7,6 +7,7 @@
         <groupId>com.mash</groupId>
         <artifactId>kafka-metrics</artifactId>
         <version>0.0.1</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>consumer-service</artifactId>
     <version>0.0.1</version>
@@ -20,6 +21,10 @@
             <id>h2</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>active.spring.profiles</name>
+                    <value>h2</value>
+                </property>
             </activation>
             <dependencies>
                 <dependency>
@@ -31,6 +36,12 @@
         </profile>
         <profile>
             <id>postgres</id>
+            <activation>
+                <property>
+                    <name>active.spring.profiles</name>
+                    <value>postgres</value>
+                </property>
+            </activation>
             <dependencies>
                 <dependency>
                     <groupId>org.postgresql</groupId>
@@ -59,6 +70,9 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <profiles>
+                        <profile>${active.spring.profiles}</profile>
+                    </profiles>
                 </configuration>
             </plugin>
         </plugins>
