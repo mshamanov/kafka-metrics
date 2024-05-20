@@ -66,6 +66,7 @@ public class ActuatorMetricsPublisher implements DataPublisher {
         return Collections.singletonList(MetricsData.builder()
                 .name("health")
                 .data(JsonUtils.stringify(this.healthEndpoint.health()))
+                .description("Detailed information about the health of the application")
                 .build());
     }
 
