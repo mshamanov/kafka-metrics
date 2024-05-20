@@ -6,6 +6,8 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "22181:2181"
+    networks:
+      - metrics-network
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -20,6 +22,19 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - metrics-network
+
+  postgres:
+    container_name: postgres_container
+    image: postgres:16.2-alpine3.19
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - metrics-network
 
   producer-service:
     build:
@@ -32,15 +47,30 @@ services:
     environment:
       PRODUCER-SERVICE_KAFKA_TOPIC: "metrics-topic"
       SPRING_KAFKA_BOOTSTRAP_SERVERS: 'kafka:9092'
+    networks:
+      - metrics-network
 
   consumer-service:
     build:
       dockerfile: Dockerfile.consumer
-    container_name: metrics-consumer-h2
+      args:
+        PROFILE: "postgres"
+    container_name: metrics-consumer-postgres
     depends_on:
       - kafka
+      - postgres
     ports:
       - "8081:8081"
     environment:
+      SPRING_PROFILES_ACTIVE: "postgres"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_container:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
       CONSUMER_SERVICE_KAFKA_TOPIC: "metrics-topic"
       SPRING_KAFKA_BOOTSTRAP_SERVERS: 'kafka:9092'
+    networks:
+      - metrics-network
+
+networks:
+  metrics-network:
+    driver: bridge
